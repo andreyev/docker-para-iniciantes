@@ -1,0 +1,1 @@
+Material de apoio para a Imersão docker para iniciantes https://eventos.lhc.net.br/event/imersao-docker-para-iniciantes-parte-1 e Imersão kubernetes para iniciantes https://eventos.lhc.net.br/event/imersao-docker-para-iniciantes-parte-2 no https://lhc.net.br/
