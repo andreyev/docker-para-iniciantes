@@ -23,6 +23,11 @@ footer: Repositório desta apresentação https://github.com/andreyev/docker-par
 
 ---
 
+Repositório desta apresentação https://github.com/andreyev/docker-para-iniciantes
+![](https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://github.com/andreyev/docker-para-iniciantes)
+
+---
+
 _Disclaimer_ #0:
 - Uma GIA(ChatGPT-4) auxiliou a confecção desta apresentação e das imagens.
 - As opiniões expressas neste documento são de responsabilidade exclusiva do autor e não refletem necessariamente as opiniões ou posições de quaisquer organizações, instituições ou entidades com as quais o autor esteja associado. As informações e visões apresentadas são de caráter pessoal e não devem ser interpretadas como uma representação oficial ou endosse de quaisquer organizações ou partes externas.
@@ -47,9 +52,9 @@ _Disclaimer_ #2:
 
 ## Agenda
 * Conceitos
-* Dockerfile
-* Comandos
+* Docker
 * Docker compose
+* Docker swarm (de relance)
 
 ---
 
@@ -66,11 +71,11 @@ _Disclaimer_ #2:
 
 ---
 
-### index.html
+### info.php
 
 ```
-<h1>Olá, Docker!</h1>
-<p>Minha primeira aplicação em um container.</p>
+<?php
+phpinfo();
 ```
 
 ---
@@ -78,11 +83,11 @@ _Disclaimer_ #2:
 ### Dockerfile
 
 ```
-FROM nginx:alpine
+FROM php:8.3-apache
 
-COPY index.html /usr/share/nginx/html/index.html
+COPY info.php /var/www/html/index.php
 
-EXPOSE 8080
+EXPOSE 80
 ```
 ---
 
@@ -174,7 +179,109 @@ EXPOSE 8080
 
 ---
 
+![bg 70%](./images/compose.png)
+
+---
+
+
+### docker-compose.yml
+```
+services:
+  web:
+    image: nginx:alpine
+    ports:
+      - "8080:80"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - app
+
+  app:
+    build: ./app
+    environment:
+      DB_HOST: db
+    depends_on:
+      - db
+
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: app
+      POSTGRES_USER: app
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-dev-password}
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+volumes:
+  db-data:
+```
+
+---
+
+# Comandos
+## 1. Configuração e inicialização
+
+* `version`:
+* `config`: `docker compose config`
+* `build`: `docker compose build`
+* `pull`: `docker compose pull`
+* `up`: `docker compose up -d`
+* `up --build`: `docker compose up --build -d`
+* `create`: `docker compose create`
+* `start`: `docker compose start`
+
+---
+
+# Comandos
+## 2. Inspecionando os serviços
+
+* `ps`: `docker compose ps`
+* `images`: `docker compose images`
+* `logs`: `docker compose logs`
+* `logs -f`: `docker compose logs -f`
+* `top`: `docker compose top`
+* `events`: `docker compose events`
+
+---
+
+# Comandos
+## 3. Executando comandos nos serviços
+
+* `exec`: `docker compose exec app sh`
+* `run`: `docker compose run --rm app php -v`
+* `cp`: `docker compose cp app:/var/www/html/index.php .`
+
+---
+
+# Comandos
+## 4. Controlando os serviços
+
+* `stop`: `docker compose stop`
+* `start`: `docker compose start`
+* `restart`: `docker compose restart`
+* `pause`: `docker compose pause`
+* `unpause`: `docker compose unpause`
+* `kill`: `docker compose kill`
+* `rm`: `docker compose rm -f`
+
+---
+
+# Comandos
+## 5. Atualização e encerramento
+
+* `build`: `docker compose build --no-cache`
+* `pull`: `docker compose pull`
+* `up`: `docker compose up -d`
+* `down`: `docker compose down`
+* `down -v`: `docker compose down -v`
+
+---
+
 # docker swarm
+
+---
+
+![bg 80%](./images/swarm.png)
 
 ---
 
