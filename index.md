@@ -317,6 +317,226 @@ footer: Repositório desta apresentação https://github.com/andreyev/docker-par
 ## Parte 2
 
 ---
+
+![bg 40%](./images/im-back.png)
+
+---
+
+![bg 70%](./images/k8s.png)
+
+---
+
+## Complexo?
+
+* Processos (aplicações)
+* Armazenamento (volumes)
+* Comunicação (redes)
+* Recursos
+* Camadas
+
+---
+
+# Comandos
+
+---
+
+| Parte | Nome | Significado |
+|---|---|---|
+| `kubectl` | CLI | Ferramenta de linha de comando |
+| `get` | Command / verb | Operação solicitada |
+| `pods` | Resource type | Tipo de recurso consultado |
+| `-n production` | Flag / option /Resource name | Nome do recurso e/ou outros parâmetros |
+
+---
+
+## Parenteses: criar o cluster
+
+```bash
+k3d cluster create demo --servers 1 --agents 2
+```
+
+---
+
+## Lista os nós
+
+```bash
+kubectl get nodes
+```
+
+---
+
+## Cria um deployment
+
+```bash
+kubectl create deployment web --image=nginx
+```
+
+---
+
+## Ou em um arquivo:
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: web
+  template:
+    metadata:
+      labels:
+        app: web
+    spec:
+      containers:
+        - name: nginx
+          image: nginx
+          ports:
+            - containerPort: 80
+```
+
+---
+
+## Aplicando pelo arquivo
+
+```bash
+kubectl apply -f deployment.yaml
+```
+
+---
+
+## Lista os deployments
+
+```bash
+kubectl get deployments
+```
+
+---
+
+## Lista os pods
+
+```bash
+kubectl get pods
+```
+
+---
+
+## Escala os pods
+
+```bash
+kubectl scale deployment web --replicas=3
+```
+
+---
+
+## Expõe o deployment
+
+```bash
+kubectl expose deployment web --port=80
+```
+
+---
+
+## Serve o deployment
+
+```bash
+kubectl port-forward service/web 8081:80
+```
+
+---
+
+## http://localhost:8081
+
+---
+
+## Escala réplicas
+
+```bash
+kubectl scale deployment web --replicas=3
+```
+
+---
+
+## Mostra mais informações
+
+```bash
+kubectl get pods -o wide
+```
+
+---
+
+## E ainda mais informações
+
+```bash
+kubectl describe pods
+```
+
+---
+
+## Troca a imagem
+
+```bash
+kubectl set image deployment/web nginx=nginx:alpine
+```
+
+---
+
+## Acompanha o processo
+
+```bash
+kubectl rollout status deployment/web
+```
+
+---
+
+## Reverte a troca
+
+```bash
+kubectl rollout undo deployment/web
+```
+
+---
+
+## Apaga o cluster
+
+```bash
+k3d cluster delete demo
+```
+
+---
+
+# Mais exemplos de camadas: volumes
+
+* Volume: armazenamento disponível para um pod
+* PersistentVolume (PV): um tipo de volume que sobrevive à remoção do pod
+* PersistentVolumeClaim (PVC): uma especificação de armazenamento para uma aplicação. Se não há um PV que atenda um novo será provisionado
+
+---
+
+## PVC
+```bash
+kubectl apply -f - <<'EOF'
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: dados-web
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+EOF
+kubectl get pvc
+kubectl get pv
+```
+---
+
+[Kubernetes: Up and Running](https://books.google.com.br/books?id=K5Q0DwAAQBAJ)
+
+---
 Repositório desta apresentação https://github.com/andreyev/docker-para-iniciantes
 ![](https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://github.com/andreyev/docker-para-iniciantes)
 <!--
